@@ -1,0 +1,26 @@
+Based on how we receive the configurations and trigger airflow, please refer to the approach based on the assumption below.
+1. UI sends POST request with configuration as a payload to the airflow RestAPI whenever the configuration is created. (Recommended approach by airflow)
+Pros.
+a. The dag will not be scheduled thus making the dag only run when data is available to process
+b. Individual instances are created for the configuration ids thus making the monitoring and logging easy on airflow.
+c. Tracking and auditing will be easier due to the creation of individual instances.
+d. Performance of each run will be easier to track based on their respective instance id and their execution time.
+2. The Dag is scheduled to run at specific time intervals.
+Cons.
+a. The dag will run even if there is no data available to be processed causing multiple instances to run empty and skip.
+b. The dag will process data in single/multiple runs thus making logging and monitoring complex.
+c. Delay in processing of configuration files since the dag are scheduled to run at a specific time.
+d. Tracking and auditing will be complex due to the creation of multiple branches in the same instance.
+e. Performance of each run will be complex to track based on their respective instance id and their execution time.
+3. The Dag is triggered by a file-watcher job on the machine where configuration files are created.
+Pros.
+a. The dag will not be scheduled thus making the dag only run when data is available to process.
+b. It will create multiple dag run instances thus making logging and monitoring easy
+c. Tracking and auditing will be easier due to the creation of individual instances.
+d. Performance of each run will be easier to track based on their respective instance id and their execution time.
+Cons.
+a. An additional script running on the instances will be required.
+b. A metadata table is required for tracking the configuration files.
+
+Also, I recommend using approach 1, please let me know if you need to connect with us for more details.
+
